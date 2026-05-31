@@ -5,15 +5,9 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-from utils.database import init_db
-
-init_db()
-
 intents = discord.Intents.default()
-intents.message_content = True
-intents.members = True
 intents.guilds = True
-intents.reactions = True
+intents.members = True
 
 
 class MorocoBot(commands.Bot):
