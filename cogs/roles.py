@@ -115,7 +115,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id FROM role_menu_roles WHERE guild_id = %s AND role_id = %s",
+            "SELECT id FROM role_menu_roles WHERE guild_id = ? AND role_id = ?",
             (interaction.guild_id, role.id)
         )
         if cursor.fetchone():
@@ -123,7 +123,7 @@ class RolesCog(commands.Cog):
             conn.close()
             return
         cursor.execute(
-            "INSERT INTO role_menu_roles (guild_id, role_id, label) VALUES (%s, %s, %s)",
+            "INSERT INTO role_menu_roles (guild_id, role_id, label) VALUES (?, ?, ?)",
             (interaction.guild_id, role.id, role.name)
         )
         conn.commit()
@@ -138,7 +138,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "DELETE FROM role_menu_roles WHERE guild_id = %s AND role_id = %s",
+            "DELETE FROM role_menu_roles WHERE guild_id = ? AND role_id = ?",
             (interaction.guild_id, role.id)
         )
         conn.commit()
@@ -152,7 +152,7 @@ class RolesCog(commands.Cog):
     async def panel_list(self, interaction: discord.Interaction):
         conn = get_conn()
         cursor = conn.cursor()
-        cursor.execute("SELECT role_id FROM role_menu_roles WHERE guild_id = %s", (interaction.guild_id,))
+        cursor.execute("SELECT role_id FROM role_menu_roles WHERE guild_id = ?", (interaction.guild_id,))
         rows = cursor.fetchall()
         conn.close()
         if not rows:
@@ -173,7 +173,7 @@ class RolesCog(commands.Cog):
     async def panel_create(self, interaction: discord.Interaction):
         conn = get_conn()
         cursor = conn.cursor()
-        cursor.execute("SELECT role_id FROM role_menu_roles WHERE guild_id = %s", (interaction.guild_id,))
+        cursor.execute("SELECT role_id FROM role_menu_roles WHERE guild_id = ?", (interaction.guild_id,))
         rows = cursor.fetchall()
         conn.close()
         if not rows:
@@ -204,8 +204,8 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "INSERT INTO guild_config (guild_id, autorole_id) VALUES (%s, %s) "
-            "ON CONFLICT(guild_id) DO UPDATE SET autorole_id = %s",
+            "INSERT INTO guild_config (guild_id, autorole_id) VALUES (?, ?) "
+            "ON CONFLICT(guild_id) DO UPDATE SET autorole_id = ?",
             (interaction.guild_id, role.id, role.id)
         )
         conn.commit()
@@ -220,7 +220,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "UPDATE guild_config SET autorole_id = NULL WHERE guild_id = %s",
+            "UPDATE guild_config SET autorole_id = NULL WHERE guild_id = ?",
             (interaction.guild_id,)
         )
         conn.commit()
@@ -234,7 +234,7 @@ class RolesCog(commands.Cog):
     async def autorole_show(self, interaction: discord.Interaction):
         conn = get_conn()
         cursor = conn.cursor()
-        cursor.execute("SELECT autorole_id FROM guild_config WHERE guild_id = %s", (interaction.guild_id,))
+        cursor.execute("SELECT autorole_id FROM guild_config WHERE guild_id = ?", (interaction.guild_id,))
         row = cursor.fetchone()
         conn.close()
         if not row or not row["autorole_id"]:
@@ -254,7 +254,7 @@ class RolesCog(commands.Cog):
             return
         conn = get_conn()
         cursor = conn.cursor()
-        cursor.execute("SELECT autorole_id FROM guild_config WHERE guild_id = %s", (member.guild.id,))
+        cursor.execute("SELECT autorole_id FROM guild_config WHERE guild_id = ?", (member.guild.id,))
         row = cursor.fetchone()
         conn.close()
         if row and row["autorole_id"]:
@@ -289,7 +289,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT id FROM reaction_roles WHERE guild_id = %s AND channel_id = %s AND message_id = %s AND emoji = %s",
+            "SELECT id FROM reaction_roles WHERE guild_id = ? AND channel_id = ? AND message_id = ? AND emoji = ?",
             (interaction.guild_id, channel.id, mid, emoji)
         )
         if cursor.fetchone():
@@ -297,7 +297,7 @@ class RolesCog(commands.Cog):
             conn.close()
             return
         cursor.execute(
-            "INSERT INTO reaction_roles (guild_id, channel_id, message_id, role_id, emoji) VALUES (%s, %s, %s, %s, %s)",
+            "INSERT INTO reaction_roles (guild_id, channel_id, message_id, role_id, emoji) VALUES (?, ?, ?, ?, ?)",
             (interaction.guild_id, channel.id, mid, role.id, emoji)
         )
         conn.commit()
@@ -328,7 +328,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "DELETE FROM reaction_roles WHERE guild_id = %s AND channel_id = %s AND message_id = %s AND emoji = %s",
+            "DELETE FROM reaction_roles WHERE guild_id = ? AND channel_id = ? AND message_id = ? AND emoji = ?",
             (interaction.guild_id, channel.id, mid, emoji)
         )
         conn.commit()
@@ -343,7 +343,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT * FROM reaction_roles WHERE guild_id = %s",
+            "SELECT * FROM reaction_roles WHERE guild_id = ?",
             (interaction.guild_id,)
         )
         rows = cursor.fetchall()
@@ -370,7 +370,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT role_id FROM reaction_roles WHERE guild_id = %s AND channel_id = %s AND message_id = %s AND emoji = %s",
+            "SELECT role_id FROM reaction_roles WHERE guild_id = ? AND channel_id = ? AND message_id = ? AND emoji = ?",
             (payload.guild_id, payload.channel_id, payload.message_id, str(payload.emoji))
         )
         row = cursor.fetchone()
@@ -393,7 +393,7 @@ class RolesCog(commands.Cog):
         conn = get_conn()
         cursor = conn.cursor()
         cursor.execute(
-            "SELECT role_id FROM reaction_roles WHERE guild_id = %s AND channel_id = %s AND message_id = %s AND emoji = %s",
+            "SELECT role_id FROM reaction_roles WHERE guild_id = ? AND channel_id = ? AND message_id = ? AND emoji = ?",
             (payload.guild_id, payload.channel_id, payload.message_id, str(payload.emoji))
         )
         row = cursor.fetchone()
